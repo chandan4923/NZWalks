@@ -52,6 +52,7 @@ namespace NZWalks.API.Controllers
             walkDomain.Length = addWalksRequest.Length;
             walkDomain.RegionID = addWalksRequest.RegionID;
             walkDomain.WalkDifficultyID = addWalksRequest.WalkDifficultyID;
+
             var walk = await _iwalksRepository.AddAsync(walkDomain);
 
             Models.DTO.Walks walksDTO = new Models.DTO.Walks() {
@@ -59,34 +60,47 @@ namespace NZWalks.API.Controllers
             Length = walkDomain.Length,
             RegionID = walkDomain.RegionID,
            WalkDifficultyID = walkDomain.WalkDifficultyID};
-            return CreatedAtAction(nameof(GetWalkAsync), new {ID=}
+            return CreatedAtAction(nameof(GetWalkAsync), new { ID = walksDTO.ID }, walksDTO);
         }
         [HttpDelete]
         [Route("{ID:guid}")]
         public async Task<IActionResult> DeleteWalksAsync(Guid ID)
         {
-             return Ok(await _iwalksRepository.DeleteAsync(ID));
+            var walksDomain = await _iwalksRepository.DeleteAsync(ID);
+            if (walksDomain == null)
+            {
+                return NotFound();
+            }
+            Models.DTO.Walks walksDTO = new Models.DTO.Walks()
+            {
+                Name = walksDomain.Name,
+                Length = walksDomain.Length,
+                RegionID = walksDomain.RegionID,
+                WalkDifficultyID = walksDomain.WalkDifficultyID
+        };
+
+             return Ok(walksDTO);
         }
         [HttpPut]
         [Route("{ID:guid}")]
-        public async Task<IActionResult> UpdateWalksAsync([FromRoute]Guid ID, [FromBody] UpdateWalksRequest walksDTO)
+        public async Task<IActionResult> UpdateWalksAsync([FromRoute]Guid ID, [FromBody] UpdateWalksRequest walksUpdate)
         {
             Models.Domain.Walks walksDomain = new Models.Domain.Walks()
             {
-                Name = walksDTO.Name,
-                Length=walksDTO.Length,
-                RegionID = walksDTO.RegionID,
-                WalkDifficultyID=walksDTO.WalkDifficultyID,
+                Name = walksUpdate.Name,
+                Length=walksUpdate.Length,
+                RegionID = walksUpdate.RegionID,
+                WalkDifficultyID=walksUpdate.WalkDifficultyID,
             };
 
            var walkFromUpdate= await _iwalksRepository.UpdateAsync(ID, walksDomain);
 
-            walksDTO.Name=walkFromUpdate.Name;
-            walksDTO.Length = walkFromUpdate.Length;
-            walksDTO.WalkDifficultyID = walkFromUpdate.WalkDifficultyID;
-            walksDTO.RegionID = walkFromUpdate.RegionID;
+            walksUpdate.Name=walkFromUpdate.Name;
+            walksUpdate.Length = walkFromUpdate.Length;
+            walksUpdate.WalkDifficultyID = walkFromUpdate.WalkDifficultyID;
+            walksUpdate.RegionID = walkFromUpdate.RegionID;
 
-            return Ok(walksDTO);
+            return Ok(walksUpdate);
         }
     }
 }

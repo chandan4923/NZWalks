@@ -27,7 +27,7 @@ namespace NZWalks.API.Repository
         {
            var walk= await _nZWalksDbContext.Walks.FirstOrDefaultAsync(x => x.ID == id);
             _nZWalksDbContext.Walks.Remove(walk);
-            _nZWalksDbContext.SaveChangesAsync();
+           await _nZWalksDbContext.SaveChangesAsync();
             return walk;
         }
 
@@ -36,7 +36,7 @@ namespace NZWalks.API.Repository
            var walks =
            await _nZWalksDbContext.Walks
           .Include(x=>x.Region)
-           .Include(x=>x.WalkDifficulties)
+           .Include(x=>x.walkDifficulty)
            .ToListAsync();
 
             return walks;
@@ -47,7 +47,7 @@ namespace NZWalks.API.Repository
             var walk=
            await _nZWalksDbContext.Walks
            .Include(x=>x.Region)
-           .Include(x=>x.WalkDifficulties)
+           .Include(x=>x.walkDifficulty)
            .FirstOrDefaultAsync(x=>x.ID==id);
 
             return walk;

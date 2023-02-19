@@ -13,6 +13,6 @@
         //Navigation peroperty
 
         public API.Models.Domain.Region Region { get; set; }
-        public API.Models.Domain.WalkDifficulty WalkDifficulties { get; set; }
+        public API.Models.Domain.WalkDifficulty walkDifficulty { get; set; }
     }
 }
